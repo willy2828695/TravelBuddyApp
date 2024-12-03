@@ -1,5 +1,7 @@
 package scene;
 
+import application.Event;
+import application.UserProfile;
 import javafx.stage.Stage;
 
 public class SceneManager {
@@ -25,8 +27,21 @@ public class SceneManager {
 		primaryStage.setScene(eventScene.getScene());
 	}
 	
-	public void switchToMatchingScene() {
-		MatchingScene matchingScene = new MatchingScene(this);
+	public void switchToMatchingScene(Event event) {
+		MatchingScene matchingScene = new MatchingScene(this, event);
 		primaryStage.setScene(matchingScene.getScene());
 	}
+
+	public void switchToItineraryScene(Event selectedEvent, UserProfile matchedUser) {
+		ItineraryScene itineraryScene = new ItineraryScene(this, selectedEvent, matchedUser);
+	    primaryStage.setScene(itineraryScene.getScene());
+		
+	}
+	
+	public void switchToProfileManageScene() {
+	    ProfileManageScene profileManageScene = new ProfileManageScene(this);
+	    primaryStage.setScene(profileManageScene.getScene());
+	}
+
+	
 }

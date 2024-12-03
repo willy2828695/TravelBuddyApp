@@ -33,11 +33,20 @@ public class EventScene {
 	}
 	
   	public Scene getScene() {
+  		
+  		
   		EventList evenList = EventList.getEventListInstance();
 
   	    VBox root = new VBox(15);
   	    root.setPadding(new Insets(20));
   	    root.setStyle("-fx-background-color: #F5F5F5;");
+  	    
+  	    Button profileManageButton = new Button("Manage Profile");
+        profileManageButton.setOnAction(e -> {
+            sceneManager.switchToProfileManageScene();
+        });
+        root.getChildren().add(profileManageButton);
+
   	    
   	    UserProfile userProfile = userList.getUserProfilByEmail(userPersistantData.getEmail());
   	    Map<String, Boolean> userInterests = userProfile.getInterest();
@@ -106,7 +115,7 @@ public class EventScene {
 
 
 	    cityButton.setOnAction(e -> {
-	    	sceneManager.switchToMatchingScene();
+	    	sceneManager.switchToMatchingScene(event);
 	    });
 
 

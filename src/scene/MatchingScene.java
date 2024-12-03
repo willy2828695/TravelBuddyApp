@@ -34,11 +34,14 @@ public class MatchingScene {
 	
 	private List<UserProfile> userListDisplay = new ArrayList<>();
 	
+	private Event selectedEvent; 
+	
 	private int currentIndex = 0;
 	
 	
-	public MatchingScene(SceneManager sceneManger) {
+	public MatchingScene(SceneManager sceneManger, Event selectedEvent) {
 		this.sceneManger = sceneManger;
+		this.selectedEvent = selectedEvent;
 	}
 	
 	public Scene getScene() {
@@ -77,23 +80,58 @@ public class MatchingScene {
         layout.setStyle("-fx-padding: 30; -fx-background-color: #f5f5f5;");
         
         tickButton.setOnAction(e -> {
+            UserProfile matchedUser = userListDisplay.get(currentIndex);
+            UserProfile currentUser = userList.getUserProfilByEmail(userPersistantData.getEmail());
+
+            
+            currentUser.addMatchedEvent(selectedEvent);
+            currentUser.addMatchedPartner(matchedUser);
+
+            
+            sceneManger.switchToItineraryScene(selectedEvent, matchedUser);
+
         });
 
-        crossButton.setOnAction(e -> {
-            currentIndex = (currentIndex + 1) % userListDisplay.size();
-            UserProfile nextUser = userListDisplay.get(currentIndex);
-
-            nameDisplay.setText("Name: " + nextUser.getName());
-
-            Map<String, Boolean> nextUserInterests = nextUser.getInterest();
-            String nextUserTrueInterests = nextUserInterests.entrySet().stream()
-                .filter(Map.Entry::getValue) 
-                .map(Map.Entry::getKey)
-                .collect(Collectors.joining(", "));
-
-            interestDisplay.setText("Interest: " + nextUserTrueInterests);
-        });
+//        crossButton.setOnAction(e -> {
+//            currentIndex = (currentIndex + 1) % userListDisplay.size();
+//            UserProfile nextUser = userListDisplay.get(currentIndex);
+//
+//            nameDisplay.setText("Name: " + nextUser.getName());
+//
+//            Map<String, Boolean> nextUserInterests = nextUser.getInterest();
+//            String nextUserTrueInterests = nextUserInterests.entrySet().stream()
+//                .filter(Map.Entry::getValue) 
+//                .map(Map.Entry::getKey)
+//                .collect(Collectors.joining(", "));
+//
+//            interestDisplay.setText("Interest: " + nextUserTrueInterests);
+//        });
         
+//        end the loop, if we have no matched partner
+        crossButton.setOnAction(e -> {
+            userListDisplay.remove(currentIndex);
+            if (userListDisplay.isEmpty()) {
+                Label noMoreUsersLabel = new Label("No more users to show.");
+                sceneManger.switchToItineraryScene(selectedEvent, null);
+              
+                layout.getChildren().clear();
+                layout.getChildren().add(noMoreUsersLabel);
+            } else {
+                currentIndex = currentIndex % userListDisplay.size();
+                UserProfile nextUser = userListDisplay.get(currentIndex);
+
+                nameDisplay.setText("Name: " + nextUser.getName());
+
+                Map<String, Boolean> nextUserInterests = nextUser.getInterest();
+                String nextUserTrueInterests = nextUserInterests.entrySet().stream()
+                    .filter(Map.Entry::getValue)
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.joining(", "));
+
+                interestDisplay.setText("Interest: " + nextUserTrueInterests);
+            }
+        });
+
         return new Scene(layout, 400, 400);
 	}
 	
@@ -104,7 +142,7 @@ public class MatchingScene {
 	  	    for (String a: activity) {
 	  	    	if (userProfile.getInterest().get(a)) {
 	  	    		for (UserProfile u: userList.getUserProfiles()) {
-	  	    			if (u.getInterest().get(a) && u.getEmail() != userProfile.getEmail()) {
+	  	    			if (u.getInterest().get(a) && !u.getEmail().equals(userProfile.getEmail())) {
 	  	    				userSet.add(u);
 	  	    			}
 	  	    		}  		

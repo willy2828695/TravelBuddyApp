@@ -1,5 +1,6 @@
 package application;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,10 @@ public class UserProfile {
 	private int budget;
 	
 	private Map<String, Boolean> interest = new HashMap<>();
+	
+	private List<Event> matchedEvents = new ArrayList<>();
+	
+	private List<UserProfile> matchedPartners = new ArrayList<>();
 	
 	public UserProfile() {
 		interest.put("Hiking", false);
@@ -89,6 +94,21 @@ public class UserProfile {
 	
 	public Map<String, Boolean> getInterest() {
 		return this.interest;
+	}
+	public void addMatchedEvent(Event event) {
+	    this.matchedEvents.add(event);
+	}
+
+	public void addMatchedPartner(UserProfile partner) {
+	    this.matchedPartners.add(partner);
+	}
+
+	public List<Event> getMatchedEvents() {
+	    return this.matchedEvents;
+	}
+
+	public List<UserProfile> getMatchedPartners() {
+	    return this.matchedPartners;
 	}
 }
 
